@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Speech Recognition</title>
+</head>
+<body>
+    <div id="speech-container" style="border: 2px solid #667eea; padding: 20px; border-radius: 10px; margin: 10px;">
+        <h4 style="margin-top: 0; color: #667eea;">🎤 Voice Input</h4>
+        <button id="recordBtn" onclick="startRecording()" 
+                style="padding: 10px 20px; background-color: #667eea; color: white; 
+                       border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
+            🎙️ Click to Record
+        </button>
+        <div id="status" style="margin-top: 10px; padding: 10px; font-weight: bold;">Ready</div>
+        <div id="result" style="margin-top: 5px; padding: 10px; color: green; display: none;"></div>
+    </div>
+
+    <script>
+        let recognition;
+        let recordedText = '';
+
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            
+            if (!SpeechRecognition) {
+                document.getElementById('status').innerHTML = '❌ Speech Recognition not supported. Use Chrome, Edge, or Safari.';
+                document.getElementById('status').style.color = 'red';
+                return;
+            }
+
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                recordedText = transcript;
+                
+                document.getElementById('result').textContent = '✅ ' + transcript;
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('status').textContent = '✅ Recognized';
+                document.getElementById('status').style.color = '#00AA00';
+                document.getElementById('recordBtn').disabled = false;
+                document.getElementById('recordBtn').textContent = '🎙️ Click to Record';
+                
+                // Store in session storage to pass to Streamlit
+                window.parent.postMessage({
+                    type: 'setComponentValue',
+                    value: transcript
+                }, '*');
+            };
+
+            recognition.onerror = function(event) {
+                document.getElementById('status').textContent = '❌ Error: ' + event.error;
+                document.getElementById('status').style.color = 'red';
+                document.getElementById('recordBtn').disabled = false;
+                document.getElementById('recordBtn').textContent = '🎙️ Click to Record';
+            };
+
+            recognition.onend = function() {
+                document.getElementById('status').textContent = '⏹️ Finished';
+                document.getElementById('status').style.color = '#666';
+            };
+        }
+
+        function startRecording() {
+            if (!recognition) {
+                initSpeechRecognition();
+                return;
+            }
+
+            const statusEl = document.getElementById('status');
+            const resultEl = document.getElementById('result');
+            const btn = document.getElementById('recordBtn');
+
+            btn.disabled = true;
+            btn.textContent = '🔴 Recording...';
+            statusEl.textContent = '🎤 Listening... Speak now!';
+            statusEl.style.color = '#FF0000';
+            resultEl.style.display = 'none';
+
+            recognition.start();
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            initSpeechRecognition();
+        };
+    </script>
+</body>
+</html>
+
