@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from langchain_helper import get_few_shot_db_chain, format_database_result
+from visualization_helper import format_with_chart
 import re
 from decimal import Decimal
 import time
@@ -498,11 +499,14 @@ if question:
             progress_bar.progress(25)
             time.sleep(0.5)
             
-            status_text.text("🤖 Formatting response with AI...")
+            status_text.text("🤖 Creating intelligent visualization...")
             progress_bar.progress(50)
             
             # Format the result using LLM
             formatted_response = format_database_result(raw_result, question)
+            
+            # Create visualization
+            vis_result = format_with_chart(question, raw_result)
             
             status_text.text("✨ Finalizing response...")
             progress_bar.progress(75)
@@ -527,6 +531,43 @@ if question:
             </div>
             """, unsafe_allow_html=True)
             
+            # Display visualization if available
+            has_chart = vis_result and vis_result.get('chart') is not None
+            has_table = vis_result and vis_result.get('table_data') is not None
+            is_single_value = vis_result and vis_result.get('metadata', {}).get('is_single_value')
+            
+            visualization_displayed = False
+            
+            if has_chart:
+                st.markdown("### 📈 Visual Representation")
+                try:
+                    st.plotly_chart(vis_result['chart'], use_container_width=True)
+                    visualization_displayed = True
+                except Exception as viz_error:
+                    st.error(f"Error displaying chart: {viz_error}")
+                    st.write(vis_result.get('error', 'No error message'))
+            
+            if not visualization_displayed and has_table:
+                st.markdown("### 📋 Tabular Data")
+                st.dataframe(vis_result['table_data'], use_container_width=True)
+                visualization_displayed = True
+            
+            if not visualization_displayed and is_single_value:
+                st.markdown("### 📊 Result")
+                st.markdown(f"""
+                <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px;">
+                    <h1 style="color: white; font-size: 4rem; margin: 0;">{vis_result['metadata'].get('value', 'N/A')}</h1>
+                    <p style="color: white; opacity: 0.9; margin: 1rem 0 0 0;">Total Count / Value</p>
+                </div>
+                """, unsafe_allow_html=True)
+                visualization_displayed = True
+            
+            # If nothing was displayed
+            if not visualization_displayed:
+                # Try to at least show something useful
+                if vis_result and 'error' in vis_result:
+                    st.error(f"Could not create visualization: {vis_result.get('error')}")
+            
             # Show the original question for context
             st.markdown(f"""
             <div class="question-section">
@@ -534,12 +575,18 @@ if question:
             </div>
             """, unsafe_allow_html=True)
             
-            # Debug section (collapsible)
-            with st.expander("🔍 Debug Info (Click to see technical details)"):
-                st.write("*Raw Database Result:*")
-                st.code(str(raw_result))
-                st.write("*Formatted Response:*")
-                st.code(formatted_response)
+            # Minimal debug section
+            with st.expander("🔍 Debug Info"):
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.write("**Raw Database Result:**")
+                    st.code(str(raw_result)[:200] + "..." if len(str(raw_result)) > 200 else str(raw_result))
+                with col2:
+                    st.write("**Visualization:**")
+                    st.code(f"Type: {vis_result.get('chart_type', 'N/A')}")
+                    st.code(f"Created: {vis_result.get('chart') is not None}")
+                    if vis_result.get('error'):
+                        st.error(f"Error: {vis_result.get('error')}")
             
             # Clear the selected question after processing
             st.session_state.selected_question = ""
