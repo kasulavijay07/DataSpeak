@@ -1,0 +1,21 @@
+# Environment variables (Secrets)
+.env
+
+# Python build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE settings
+.vscode/
+.idea/
+
+# Streamlit
+.streamlit/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Database files
+*.db
+*.sql
