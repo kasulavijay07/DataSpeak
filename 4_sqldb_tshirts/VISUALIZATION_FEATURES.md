@@ -2,7 +2,7 @@
 
 ## Overview
 
-Your QurdDB application now includes **intelligent visualization** that automatically selects the best chart type based on your question and data structure.
+Your DataSpeak application now includes **intelligent visualization** that automatically selects the best chart type based on your question and data structure.
 
 ## How It Works
 

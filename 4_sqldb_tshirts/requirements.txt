@@ -1,7 +1,7 @@
 langchain==0.0.284
 python-dotenv==1.0.0
-streamlit==1.22.0
-tiktoken==0.4.0
+streamlit>=1.38.0
+tiktoken>=0.5.0
 faiss-cpu
 protobuf
 langchain_experimental
@@ -13,3 +13,5 @@ chromadb
 plotly>=5.17.0
 pandas>=2.0.0
 openpyxl
+SpeechRecognition
+pydub

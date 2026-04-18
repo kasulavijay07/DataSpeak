@@ -1,8 +1,8 @@
-# 🎯 QurdDB - Project Roadshow Presentation Guide
+# 🎯 DataSpeak - Project Roadshow Presentation Guide
 
 ## 📋 Project Overview
 
-**QurdDB** is an intelligent database Q&A system that allows users to interact with a MySQL database using natural language - either by typing or speaking! The system automatically converts questions into SQL queries, executes them, and presents results with intelligent visualizations.
+**DataSpeak** is an intelligent database Q&A system that allows users to interact with a MySQL database using natural language - either by typing or speaking! The system automatically converts questions into SQL queries, executes them, and presents results with intelligent visualizations.
 
 ---
 
@@ -10,7 +10,7 @@
 
 ### 1. **Introduction (30 seconds)**
 - **Problem Statement**: "Not everyone knows SQL, but everyone needs database insights"
-- **Solution**: "QurdDB makes databases accessible to everyone through natural language"
+- **Solution**: "DataSpeak makes databases accessible to everyone through natural language"
 - **Use Case**: "Perfect for store managers, business analysts, or anyone who needs quick database answers"
 
 ### 2. **Live Demo (2-3 minutes)**
@@ -181,7 +181,7 @@ Explain the flow:
 ## 📊 PROJECT STRUCTURE EXPLANATION
 
 ```
-QurdDB/
+DataSpeak/
 ├── main.py                    # Streamlit UI application
 ├── langchain_helper.py        # Core LLM & database logic
 ├── visualization_helper.py    # Intelligent chart generation
@@ -243,7 +243,7 @@ QurdDB/
 ## 🎯 TALKING POINTS
 
 ### **When explaining the problem:**
-"Most people need database insights but don't know SQL. QurdDB bridges this gap."
+"Most people need database insights but don't know SQL. DataSpeak bridges this gap."
 
 ### **When showing the demo:**
 "Watch how easy this is - just ask naturally, and get instant insights with beautiful visualizations."

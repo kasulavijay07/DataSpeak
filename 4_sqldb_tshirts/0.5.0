@@ -1,0 +1,7 @@
+Requirement already satisfied: tiktoken in C:\Users\Poojitha\AppData\Local\Programs\Python\Python312\Lib\site-packages (0.7.0)
+Requirement already satisfied: regex>=2022.1.18 in C:\Users\Poojitha\AppData\Local\Programs\Python\Python312\Lib\site-packages (from tiktoken) (2026.2.28)
+Requirement already satisfied: requests>=2.26.0 in C:\Users\Poojitha\AppData\Local\Programs\Python\Python312\Lib\site-packages (from tiktoken) (2.33.1)
+Requirement already satisfied: charset_normalizer<4,>=2 in C:\Users\Poojitha\AppData\Local\Programs\Python\Python312\Lib\site-packages (from requests>=2.26.0->tiktoken) (3.3.2)
+Requirement already satisfied: idna<4,>=2.5 in C:\Users\Poojitha\AppData\Local\Programs\Python\Python312\Lib\site-packages (from requests>=2.26.0->tiktoken) (3.8)
+Requirement already satisfied: urllib3<3,>=1.26 in C:\Users\Poojitha\AppData\Local\Programs\Python\Python312\Lib\site-packages (from requests>=2.26.0->tiktoken) (2.2.3)
+Requirement already satisfied: certifi>=2023.5.7 in C:\Users\Poojitha\AppData\Local\Programs\Python\Python312\Lib\site-packages (from requests>=2.26.0->tiktoken) (2024.8.30)

@@ -1,7 +1,6 @@
 from few_shots import few_shots
 import os
 from dotenv import load_dotenv
-import re
 from decimal import Decimal
 import warnings
 import time
@@ -9,17 +8,88 @@ import time
 # Suppress FutureWarning from PyTorch/transformers
 warnings.filterwarnings("ignore", category=FutureWarning, module="torch")
 
-# Newer imports
-from langchain.schema import SystemMessage, HumanMessage, AIMessage
-from langchain_google_genai import ChatGoogleGenerativeAI  # from langchain_google_genai
-from langchain_experimental.sql import SQLDatabaseChain
-from langchain.utilities import SQLDatabase
-from langchain.vectorstores import Chroma
-from langchain.embeddings import HuggingFaceEmbeddings  # check version
-from langchain.prompts.prompt import PromptTemplate
-from langchain.prompts import FewShotPromptTemplate, SemanticSimilarityExampleSelector
+# Import compatibility across LangChain versions/splits.
+_IMPORT_ERRORS = []
+
+try:
+    from langchain_google_genai import ChatGoogleGenerativeAI
+except ImportError as exc:
+    ChatGoogleGenerativeAI = None
+    _IMPORT_ERRORS.append(f"langchain_google_genai: {exc}")
+
+try:
+    from langchain_experimental.sql import SQLDatabaseChain
+except ImportError as exc:
+    SQLDatabaseChain = None
+    _IMPORT_ERRORS.append(f"langchain_experimental.sql: {exc}")
+
+try:
+    from langchain_community.utilities import SQLDatabase
+except ImportError:
+    try:
+        from langchain.utilities import SQLDatabase
+    except ImportError as exc:
+        SQLDatabase = None
+        _IMPORT_ERRORS.append(f"SQLDatabase import failed: {exc}")
+
+try:
+    from langchain_community.vectorstores import Chroma
+except ImportError:
+    try:
+        from langchain.vectorstores import Chroma
+    except ImportError as exc:
+        Chroma = None
+        _IMPORT_ERRORS.append(f"Chroma import failed: {exc}")
+
+try:
+    from langchain_community.embeddings import HuggingFaceEmbeddings
+except ImportError:
+    try:
+        from langchain.embeddings import HuggingFaceEmbeddings
+    except ImportError as exc:
+        HuggingFaceEmbeddings = None
+        _IMPORT_ERRORS.append(f"HuggingFaceEmbeddings import failed: {exc}")
+
+try:
+    from langchain.prompts.prompt import PromptTemplate
+except ImportError as exc:
+    try:
+        from langchain_core.prompts import PromptTemplate
+    except ImportError:
+        PromptTemplate = None
+        _IMPORT_ERRORS.append(f"PromptTemplate import failed: {exc}")
+
+try:
+    from langchain.prompts import FewShotPromptTemplate
+except ImportError as exc:
+    try:
+        from langchain_core.prompts import FewShotPromptTemplate
+    except ImportError:
+        FewShotPromptTemplate = None
+        _IMPORT_ERRORS.append(f"FewShotPromptTemplate import failed: {exc}")
+
+try:
+    from langchain.prompts import SemanticSimilarityExampleSelector
+except ImportError:
+    try:
+        from langchain.prompts.example_selector import SemanticSimilarityExampleSelector
+    except ImportError as exc:
+        try:
+            from langchain_core.example_selectors import SemanticSimilarityExampleSelector
+        except ImportError:
+            SemanticSimilarityExampleSelector = None
+            _IMPORT_ERRORS.append(f"SemanticSimilarityExampleSelector import failed: {exc}")
 
 load_dotenv()
+
+
+def _ensure_dependencies_ready():
+    if _IMPORT_ERRORS:
+        details = "\n- " + "\n- ".join(_IMPORT_ERRORS)
+        raise ImportError(
+            "Missing or incompatible LangChain dependencies detected. "
+            "Install/upgrade required packages and retry." + details
+        )
 
 def format_database_result_with_llm(question, raw_result, db_schema=""):
     """
@@ -27,6 +97,7 @@ def format_database_result_with_llm(question, raw_result, db_schema=""):
     """
     max_retries = 3
     retry_delay = 2  # seconds
+    _ensure_dependencies_ready()
     
     for attempt in range(max_retries):
         try:
@@ -125,6 +196,8 @@ def format_database_result(result, question=""):
     return format_database_result_with_llm(question, result, db_schema)
 
 def get_few_shot_db_chain():
+    _ensure_dependencies_ready()
+
     # Database credentials
     db_user = os.getenv("DB_USER", "root")
     db_password = os.getenv("DB_PASS", "9030")
@@ -150,9 +223,6 @@ def get_few_shot_db_chain():
 
     # Build embeddings & example selector (for few shot)
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    # Prepare your few_shots (list of dicts with keys matching the example prompt)
-    from few_shots import few_shots  
-
     to_vectorize = [" ".join(example.values()) for example in few_shots]
     vectorstore = Chroma.from_texts(to_vectorize, embeddings, metadatas=few_shots)
 

@@ -1,7 +1,7 @@
-# 🚀 QurdDB - Quick Reference Card
+# 🚀 DataSpeak - Quick Reference Card
 
 ## ⚡ ELEVATOR PITCH (30 seconds)
-"QurdDB is an intelligent database assistant that lets anyone ask questions in natural language - no SQL knowledge required. You can type or speak your questions, and get instant insights with beautiful visualizations."
+"DataSpeak is an intelligent database assistant that lets anyone ask questions in natural language - no SQL knowledge required. You can type or speak your questions, and get instant insights with beautiful visualizations."
 
 ---
 
@@ -153,13 +153,13 @@ Display (Text + Charts)
 
 ## 🎤 OPENING LINE
 
-"Hi everyone! I'm excited to show you QurdDB - a system that makes databases accessible to everyone through natural language and AI."
+"Hi everyone! I'm excited to show you DataSpeak - a system that makes databases accessible to everyone through natural language and AI."
 
 ---
 
 ## 🎬 CLOSING LINE
 
-"QurdDB demonstrates how AI can democratize database access, making insights available to everyone, not just SQL experts. Thank you!"
+"DataSpeak demonstrates how AI can democratize database access, making insights available to everyone, not just SQL experts. Thank you!"
 
 ---
 
